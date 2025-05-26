@@ -9,12 +9,14 @@ API: https://pokeapi.co/
 
 ## Como rodar o projeto localmente
 Clone o repositório:
+
 ```bash
 git clone https://github.com/Liviacavalcanter/pokemon-api.git
-
+```
 Acesse as pastas do back-end (/back) e do front-end (/front) separadamente e, em cada uma delas, execute:
+
 ```bash
 npm install
 npm start
-
+```
 Certifique-se de que o back-end esteja rodando antes de iniciar o front-end, pois o projeto foi construído para consumir os dados a partir das rotas da API local (back-end).
