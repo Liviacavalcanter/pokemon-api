@@ -22,16 +22,10 @@ function App() {
   const fetchPokemons = async () => {
     try {
       setLoading(true)
-      const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
+      const res = await fetch("http://localhost:5000/api/pokemon")
       const data = await res.json()
-      const pokemonDetails = await Promise.all(
-        data.results.map(async (pokemon) => {
-          const res = await fetch(pokemon.url)
-          return res.json()
-        })
-      )
-      setPokemons(pokemonDetails)
-      setFilteredPokemons(pokemonDetails)
+      setPokemons(data)
+      setFilteredPokemons(data)
     } catch (error) {
       console.error("Erro ao buscar pokémons:", error)
     } finally {
@@ -41,16 +35,14 @@ function App() {
 
   const fetchTypes = async () => {
     try {
-      const res = await fetch("https://pokeapi.co/api/v2/type")
+      const res = await fetch("http://localhost:5000/api/pokemon/types")
       const data = await res.json()
-      const validTypes = data.results.filter(
-        (type) => type.name !== "shadow" && type.name !== "unknown"
-      )
-      setTypes(validTypes)
+      setTypes(data)
     } catch (error) {
       console.error("Erro ao buscar tipos:", error)
     }
   }
+  
 
   const handleAddToTeam = (pokemon) => {
     if (team.length < 5 && !team.some((p) => p.id === pokemon.id)) {
@@ -125,14 +117,14 @@ function App() {
           <ul className="flex flex-col gap-4 items-center">
             {evolutionChain.map((name) => (
               <li key={name} className="text-center">
-                <img
+            <img
                   src={`https://img.pokemondb.net/sprites/home/normal/${name}.png`}
                   alt={name}
-                  className="w-20 h-20 mx-auto"
-                />
+              className="w-20 h-20 mx-auto"
+            />
                 <span className="block text-sm mt-1 capitalize">{name}</span>
-              </li>
-            ))}
+          </li>
+        ))}
           </ul>
         </div>
       </div>
