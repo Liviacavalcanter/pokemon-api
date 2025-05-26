@@ -1,6 +1,6 @@
 "use client"
 
-const PokemonCard = ({ pokemon, onAddToTeam }) => {
+const PokemonCard = ({ pokemon, onAddToTeam, onViewEvolution }) => {
   const getTypeColor = (type) => {
     const typeColors = {
       normal: "bg-gray-100 text-gray-600",
@@ -33,28 +33,23 @@ const PokemonCard = ({ pokemon, onAddToTeam }) => {
           <img
             src={pokemon.sprites.front_default || "/placeholder.svg?height=80&width=80"}
             alt={pokemon.name}
-            className="w-full h-full object-contain"
-          />
+            className="w-full h-full object-contain"/>
         </div>
-
         <h3 className="text-sm font-medium text-gray-800 capitalize mb-2">{pokemon.name}</h3>
-
         <div className="flex gap-1 mb-4">
           {pokemon.types.map((typeInfo) => (
             <span
               key={typeInfo.type.name}
-              className={`${getTypeColor(typeInfo.type.name)} text-xs px-2 py-1 rounded-full capitalize`}
-            >
+              className={`${getTypeColor(typeInfo.type.name)} text-xs px-2 py-1 rounded-full capitalize`}>
               {typeInfo.type.name}
             </span>
           ))}
         </div>
-
-        <button
-          onClick={() => onAddToTeam(pokemon)}
-          className="w-full text-sm bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 hover:border-rose-300 py-2 px-3 rounded-md transition-colors duration-200"
-        >
+        <button onClick={() => onAddToTeam(pokemon)} className="w-full text-sm bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 hover:border-rose-300 py-2 px-3 rounded-md transition-colors duration-200 mb-2">
           Adicionar
+        </button>
+        <button onClick={() => onViewEvolution(pokemon)} className="w-full text-sm bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 hover:border-gray-300 py-2 px-3 rounded-md transition-colors duration-200">
+          Ver evolução
         </button>
       </div>
     </div>

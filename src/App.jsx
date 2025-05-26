@@ -11,6 +11,8 @@ function App() {
   const [team, setTeam] = useState([])
   const [loading, setLoading] = useState(true)
   const [types, setTypes] = useState([])
+  const [evolutionChain, setEvolutionChain] = useState([])
+  const [showEvolutionModal, setShowEvolutionModal] = useState(false)
 
   useEffect(() => {
     fetchPokemons()
@@ -20,7 +22,6 @@ function App() {
   const fetchPokemons = async () => {
     try {
       setLoading(true)
-
       const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
       const data = await res.json()
       const pokemonDetails = await Promise.all(
@@ -29,7 +30,6 @@ function App() {
           return res.json()
         })
       )
-
       setPokemons(pokemonDetails)
       setFilteredPokemons(pokemonDetails)
     } catch (error) {
@@ -43,11 +43,9 @@ function App() {
     try {
       const res = await fetch("https://pokeapi.co/api/v2/type")
       const data = await res.json()
-
       const validTypes = data.results.filter(
         (type) => type.name !== "shadow" && type.name !== "unknown"
       )
-
       setTypes(validTypes)
     } catch (error) {
       console.error("Erro ao buscar tipos:", error)
@@ -70,21 +68,41 @@ function App() {
 
   const handleFilter = (name, type) => {
     let filtered = pokemons
-
     if (name) {
       filtered = filtered.filter((pokemon) =>
         pokemon.name.toLowerCase().includes(name.toLowerCase())
       )
     }
-
     if (type && type !== "all") {
       filtered = filtered.filter((pokemon) =>
         pokemon.types.some((t) => t.type.name === type)
       )
     }
-
     setFilteredPokemons(filtered)
   }
+
+  const handleViewEvolution = async (pokemon) => {
+    try {
+      const speciesRes = await fetch(pokemon.species.url)
+      const speciesData = await speciesRes.json()
+      const evoRes = await fetch(speciesData.evolution_chain.url)
+      const evoData = await evoRes.json()
+  
+      const chain = evoData.chain
+      const evolutions = []
+  
+      let current = chain
+      while (current) {
+        evolutions.push(current.species.name)
+        current = current.evolves_to[0]
+      }
+  
+      setEvolutionChain(evolutions)
+      setShowEvolutionModal(true)
+    } catch (error) {
+      console.error("Erro ao buscar evolução:", error)
+    }
+  }  
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -93,6 +111,32 @@ function App() {
           <h1 className="text-2xl font-bold">Pokémon Team Builder</h1>
         </div>
       </header>
+
+      {showEvolutionModal && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg max-w-md w-full relative">
+          <button
+            onClick={() => setShowEvolutionModal(false)}
+            className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-xl"
+          >
+            &times;
+          </button>
+          <h3 className="text-lg font-semibold mb-4 text-center">Cadeia de Evolução</h3>
+          <ul className="flex flex-col gap-4 items-center">
+            {evolutionChain.map((name) => (
+              <li key={name} className="text-center">
+                <img
+                  src={`https://img.pokemondb.net/sprites/home/normal/${name}.png`}
+                  alt={name}
+                  className="w-20 h-20 mx-auto"
+                />
+                <span className="block text-sm mt-1 capitalize">{name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )}
 
       <main className="container mx-auto p-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -109,7 +153,7 @@ function App() {
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
                 </div>
               ) : (
-                <PokemonList pokemons={filteredPokemons} onAddToTeam={handleAddToTeam} />
+                <PokemonList pokemons={filteredPokemons} onAddToTeam={handleAddToTeam} onViewEvolution={handleViewEvolution}/>
               )}
             </div>
           </div>
