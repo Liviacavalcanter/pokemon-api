@@ -46,10 +46,10 @@ const PokemonFilter = ({ onFilter, types }) => {
           >
             <option value="all">Todos</option>
             {types.map((type) => (
-              <option key={type} value={type}>
-                {type.charAt(0).toUpperCase() + type.slice(1)}
-              </option>
-            ))}
+            <option key={type.name} value={type.name}>
+              {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
+            </option>
+          ))}
           </select>
         </div>
       </div>

@@ -13,7 +13,6 @@ function App() {
   const [types, setTypes] = useState([])
 
   useEffect(() => {
-    // Fetch all pokemons when component mounts
     fetchPokemons()
     fetchTypes()
   }, [])
@@ -21,24 +20,37 @@ function App() {
   const fetchPokemons = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:5000/api/pokemons")
-      const data = await response.json()
-      setPokemons(data)
-      setFilteredPokemons(data)
-      setLoading(false)
+
+      const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
+      const data = await res.json()
+      const pokemonDetails = await Promise.all(
+        data.results.map(async (pokemon) => {
+          const res = await fetch(pokemon.url)
+          return res.json()
+        })
+      )
+
+      setPokemons(pokemonDetails)
+      setFilteredPokemons(pokemonDetails)
     } catch (error) {
-      console.error("Error fetching pokemons:", error)
+      console.error("Erro ao buscar pokémons:", error)
+    } finally {
       setLoading(false)
     }
   }
 
   const fetchTypes = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/types")
-      const data = await response.json()
-      setTypes(data)
+      const res = await fetch("https://pokeapi.co/api/v2/type")
+      const data = await res.json()
+
+      const validTypes = data.results.filter(
+        (type) => type.name !== "shadow" && type.name !== "unknown"
+      )
+
+      setTypes(validTypes)
     } catch (error) {
-      console.error("Error fetching types:", error)
+      console.error("Erro ao buscar tipos:", error)
     }
   }
 
@@ -60,11 +72,15 @@ function App() {
     let filtered = pokemons
 
     if (name) {
-      filtered = filtered.filter((pokemon) => pokemon.name.toLowerCase().includes(name.toLowerCase()))
+      filtered = filtered.filter((pokemon) =>
+        pokemon.name.toLowerCase().includes(name.toLowerCase())
+      )
     }
 
     if (type && type !== "all") {
-      filtered = filtered.filter((pokemon) => pokemon.types.some((t) => t.type.name === type))
+      filtered = filtered.filter((pokemon) =>
+        pokemon.types.some((t) => t.type.name === type)
+      )
     }
 
     setFilteredPokemons(filtered)
