@@ -3,8 +3,10 @@
 Projeto full-stack desenvolvido com React e Node.js para montar e gerenciar times de Pokémon. É possível criar equipes com até 5 Pokémon, listar todos, filtrar por nome ou tipo e visualizar suas evoluções. Os dados são consumidos da PokéAPI.
 
 ## Tecnologias
-Front-end: ReactJS, Tailwind CSS, Axios
+Front-end: ReactJS e Tailwind CSS
+
 Back-end: Node.js, Express, CORS
+
 API: https://pokeapi.co/
 
 ## Como rodar o projeto localmente
